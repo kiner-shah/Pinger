@@ -1,3 +1,7 @@
+# Copyright (c) 2024, Kiner Shah
+# This source code is distributed under BSD-3 Clause License
+# details of which can be found in LICENSE file.
+
 cmake_minimum_required(VERSION 3.15)
 project(pinger VERSION 0.1)
 
@@ -10,16 +14,17 @@ set(PINGER_SOURCES
     Socket.cpp
     ipv4_header.cpp
     icmp_header.cpp
-    Pinger.cpp
-    test.cpp)
+    Pinger.cpp)
 
 find_package(Threads REQUIRED)
 if (NOT Threads_FOUND)
     message(FATAL_ERROR "Threads not found")
 endif()
 
-add_executable(pinger ${PINGER_SOURCES})
-target_link_libraries(pinger LINK_PUBLIC Threads::Threads)
+add_library(pinger STATIC ${PINGER_SOURCES})
+
+add_executable(testpinger test.cpp)
+target_link_libraries(testpinger LINK_PUBLIC pinger Threads::Threads)
 if (MSVC OR WIN32)
-    target_link_libraries(pinger LINK_PUBLIC Ws2_32)
+    target_link_libraries(testpinger LINK_PUBLIC Ws2_32)
 endif()

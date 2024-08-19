@@ -1,3 +1,7 @@
+// Copyright (c) 2024, Kiner Shah
+// This source code is distributed under BSD-3 Clause License
+// details of which can be found in LICENSE file.
+
 #if defined(__unix__)
 #include "PosixDatagramSocket.hpp"
 #include "utils.hpp"
