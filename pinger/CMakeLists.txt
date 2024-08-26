@@ -38,6 +38,7 @@ endif()
 # Create install rules
 install(TARGETS pinger DESTINATION lib)
 install(FILES include/Pinger.hpp DESTINATION include)
+install(FILES ../LICENSE DESTINATION include/..)
 
 # Create test application
 add_executable(testpinger test.cpp)
