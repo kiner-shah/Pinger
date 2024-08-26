@@ -6,7 +6,10 @@ cmake_minimum_required(VERSION 3.15)
 project(pinger VERSION 0.2)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 
+# Set sources for pinger library
 set(PINGER_SOURCES
     src/utils.cpp
     src/WindowsRawSocket.cpp
@@ -16,17 +19,26 @@ set(PINGER_SOURCES
     src/icmp_header.cpp
     src/PingerImpl.cpp)
 
+# Find threads package
 find_package(Threads REQUIRED)
 if (NOT Threads_FOUND)
     message(FATAL_ERROR "Threads not found")
 endif()
 
+# Create pinger library
 add_library(pinger STATIC ${PINGER_SOURCES})
+
+# Set header and library paths required by pinger library
 target_include_directories(pinger PUBLIC include)
 target_link_libraries(pinger LINK_PRIVATE Threads::Threads)
 if (MSVC OR WIN32)
     target_link_libraries(pinger LINK_PRIVATE Ws2_32)
 endif()
 
+# Create install rules
+install(TARGETS pinger DESTINATION lib)
+install(FILES include/Pinger.hpp DESTINATION include)
+
+# Create test application
 add_executable(testpinger test.cpp)
 target_link_libraries(testpinger LINK_PUBLIC pinger Threads::Threads)
