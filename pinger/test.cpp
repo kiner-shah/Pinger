@@ -5,9 +5,6 @@
 #include "Pinger.hpp"
 #include <string>
 #include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <future>
 #include <thread>
 
 int main()
