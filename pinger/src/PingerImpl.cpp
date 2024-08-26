@@ -2,7 +2,7 @@
 // This source code is distributed under BSD-3 Clause License
 // details of which can be found in LICENSE file.
 
-#include "Pinger.hpp"
+#include "PingerImpl.hpp"
 #include "icmp_header.hpp"
 #include "ipv4_header.hpp"
 #include "utils.hpp"
@@ -13,7 +13,12 @@
 
 namespace pinger
 {
-Pinger::Pinger(const PingerConfig &conf, PingerCallbackOnNetworkChange callback)
+std::unique_ptr<Pinger> Pinger::create(const PingerConfig& conf, PingerCallbackOnNetworkChange callback)
+{
+    return std::make_unique<PingerImpl>(conf, callback);
+}
+
+PingerImpl::PingerImpl(const PingerConfig &conf, PingerCallbackOnNetworkChange callback)
     : m_callback(std::move(callback)), m_conf{conf}, m_loop_counter{0}, m_identifier{get_process_id()}
     , m_source_ip_address{get_ip_address("172.23.94.231")}
     , m_dest_ip_address{get_ip_address(conf.destination_address)}
@@ -53,12 +58,12 @@ Pinger::Pinger(const PingerConfig &conf, PingerCallbackOnNetworkChange callback)
     }
 }
 
-Pinger::~Pinger()
+PingerImpl::~PingerImpl()
 {
     stop();
 }
 
-bool Pinger::handle_receive()
+bool PingerImpl::handle_receive()
 {
     std::array<char, 256> buffer;
     std::fill(buffer.begin(), buffer.end(), 0);
@@ -120,7 +125,7 @@ bool Pinger::handle_receive()
     }
 }
 
-void Pinger::handle_send()
+void PingerImpl::handle_send()
 {
     using namespace std::chrono_literals;
 
@@ -185,7 +190,7 @@ void Pinger::handle_send()
     std::this_thread::sleep_for(1s);
 }
 
-void Pinger::start()
+void PingerImpl::start()
 {
     m_receive_thread = std::thread([this]()
     {
@@ -212,7 +217,7 @@ void Pinger::start()
     });
 }
 
-void Pinger::stop()
+void PingerImpl::stop()
 {
     if (!m_is_stopped)
     {

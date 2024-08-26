@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <sstream>
 #include <future>
+#include <thread>
 
 int main()
 {
@@ -21,8 +22,8 @@ int main()
         std::cerr << (is_online ? "ONLINE" : "OFFLINE") << '\n';
     };
 
-    pinger::Pinger pinger{config, callback};
-    pinger.start();
+    auto pinger_ptr = pinger::Pinger::create(config, callback);
+    pinger_ptr->start();
     std::this_thread::sleep_for(10s);
-    pinger.stop();
+    pinger_ptr->stop();
 }

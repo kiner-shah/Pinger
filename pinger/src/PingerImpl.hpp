@@ -10,21 +10,14 @@
 #include <mutex>
 #include <chrono>
 #include <condition_variable>
+#include "Pinger.hpp"
 #include "Socket.hpp"
 
 namespace pinger
 {
 
-struct PingerConfig
+class PingerImpl : public Pinger
 {
-    std::string destination_address;
-    // Number of ping requests to send, 0 means infinite
-    std::uint32_t count = 0;
-};
-
-class Pinger
-{
-    using PingerCallbackOnNetworkChange = std::function<void(bool)>;
     using LoopCondition = std::function<bool(void)>;
 
     PingerConfig m_conf;
@@ -53,9 +46,9 @@ class Pinger
     void handle_send();
 
 public:
-    Pinger(const PingerConfig& conf, PingerCallbackOnNetworkChange callback);
-    ~Pinger();
-    void start();
-    void stop();
+    PingerImpl(const PingerConfig& conf, PingerCallbackOnNetworkChange callback);
+    ~PingerImpl();
+    void start() override;
+    void stop() override;
 };
 }   // namespace pinger
