@@ -5,6 +5,9 @@
 cmake_minimum_required(VERSION 3.15)
 project(pinger VERSION 0.2)
 
+# Configurable options
+option(PINGER_BUILD_SAMPLES "Build samples that demonstrate how to use libpinger" ON)
+
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
@@ -40,6 +43,8 @@ install(TARGETS pinger DESTINATION lib)
 install(FILES include/Pinger.hpp DESTINATION include)
 install(FILES ../LICENSE DESTINATION include/..)
 
-# Create test application
-add_executable(testpinger test.cpp)
-target_link_libraries(testpinger LINK_PUBLIC pinger Threads::Threads)
+# Create sample application
+if (PINGER_BUILD_SAMPLES)
+    add_executable(testpinger test.cpp)
+    target_link_libraries(testpinger LINK_PUBLIC pinger Threads::Threads)
+endif()
